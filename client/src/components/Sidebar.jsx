@@ -131,11 +131,11 @@ const Sidebar = ({ chats, selectedChat, onChatSelect, onNewChat }) => {
                           </span>
                         )}
                       </div>
-                      <p className="text-sm text-gray-500 truncate">@{otherUser.username}</p>
+                      {/* <p className="text-sm text-gray-500 truncate">@{otherUser.username}</p> */}
                       {chat.latest_message && (
                         <p className="text-sm text-gray-600 truncate">
                           {chat.latest_message.sender_id === user.id
-                            ? `YOU: ${chat.latest_message.message_text || 'Image'}`
+                            ? `You: ${chat.latest_message.message_text || 'Image'}`
                             : chat.latest_message.message_text || 'Image'}
                         </p>
                       )}
