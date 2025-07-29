@@ -1,2 +1,6 @@
+/* Make all interactive buttons and clickable elements use pointer cursor */
+button, [role="button"], .cursor-pointer, input[type="button"], input[type="submit"], input[type="reset"] {
+  cursor: pointer;
+}
 
 @import "tailwindcss";
