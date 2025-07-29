@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useSocket } from '../contexts/SocketContext'
 import { Search, Plus, LogOut, User, MessageSquare } from 'lucide-react'
@@ -7,8 +7,37 @@ import axios from 'axios'
 
 const Sidebar = ({ chats, selectedChat, onChatSelect, onNewChat }) => {
   const [showUserSearch, setShowUserSearch] = useState(false)
+  const [sidebarChats, setSidebarChats] = useState(chats)
   const { user, logout } = useAuth()
-  const { onlineUsers } = useSocket()
+  const { onlineUsers, socket } = useSocket()
+  // Keep sidebarChats in sync with parent chats prop
+  useEffect(() => {
+    setSidebarChats(chats)
+  }, [chats])
+
+  // Real-time update for sidebar on new messages
+  useEffect(() => {
+    if (!socket) return
+    const handleNewMessage = (message) => {
+      setSidebarChats(prevChats => {
+        // Find the chat to update
+        const idx = prevChats.findIndex(c => c.id === message.chat_id)
+        if (idx === -1) return prevChats
+        // Update latest_message for the chat
+        const updatedChat = {
+          ...prevChats[idx],
+          latest_message: message
+        }
+        // Move updated chat to top
+        const newChats = [updatedChat, ...prevChats.filter((c, i) => i !== idx)]
+        return newChats
+      })
+    }
+    socket.on('new-message', handleNewMessage)
+    return () => {
+      socket.off('new-message', handleNewMessage)
+    }
+  }, [socket])
 
   const handleCreateChat = async (selectedUser) => {
     try {
@@ -89,18 +118,17 @@ const Sidebar = ({ chats, selectedChat, onChatSelect, onNewChat }) => {
 
       {/* Chat List */}
       <div className="flex-1 overflow-y-auto scrollbar-thin">
-        {chats.length === 0 ? (
+        {sidebarChats.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-gray-500">
             <MessageSquare className="h-12 w-12 mb-4 opacity-50" />
             <p className="text-center px-4">No chats yet. Start a conversation!</p>
           </div>
         ) : (
           <div className="space-y-1 p-2">
-            {chats.map((chat) => {
+            {sidebarChats.map((chat) => {
               const otherUser = chat.user1_id === user.id ? chat.user2 : chat.user1
               const isSelected = selectedChat?.id === chat.id
               const isOnline = isUserOnline(otherUser.id)
-              
               return (
                 <button
                   key={chat.id}

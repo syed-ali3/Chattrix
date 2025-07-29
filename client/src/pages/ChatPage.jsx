@@ -119,9 +119,7 @@ const ChatPage = () => {
       )
 
       const newMessage = response.data.message
-      setMessages(prev => [...prev, newMessage])
-
-      // Emit via socket for real-time updates
+      // Only emit via socket, don't add to state here (will be handled by socket event)
       if (socket) {
         socket.emit('send-message', newMessage)
       }

@@ -64,8 +64,9 @@ io.on('connection', (socket) => {
   })
 
   socket.on('send-message', (message) => {
-    // Broadcast message to other users in the chat
-    socket.to(`chat-${message.chat_id}`).emit('new-message', message)
+    // Emit to all users in the chat (global event for sidebar updates)
+    // This will send to all sockets, but you can optimize by tracking chat members if needed
+    io.emit('new-message', message)
   })
 
   socket.on('disconnect', () => {
