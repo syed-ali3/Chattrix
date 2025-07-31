@@ -47,21 +47,23 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  const register = async (userData) => {
+
+
+
+  const accountCreation = async (email, enteredCode, userData) => {
     try {
-      const response = await axios.post('/api/auth/register', userData)
-      
-      const newUser = response.data.user
-      setUser(newUser)
-      localStorage.setItem('chattrix_user', JSON.stringify(newUser))
-      return { success: true }
+      const response = await axios.post('/api/auth/accountCreation', { email, enteredCode, userData });
+      const newUser = response.data.user;
+      setUser(newUser);
+      localStorage.setItem('chattrix_user', JSON.stringify(newUser));
+      return { success: true };
     } catch (error) {
-      return { 
-        success: false, 
-        error: error.response?.data?.error || 'Registration failed' 
-      }
+      return {
+        success: false,
+        error: error.response?.data?.error || 'OTP verification failed'
+      };
     }
-  }
+  };
 
   const logout = async () => {
     try {
@@ -77,7 +79,7 @@ export const AuthProvider = ({ children }) => {
   const value = {
     user,
     login,
-    register,
+    accountCreation,
     logout,
     loading
   }

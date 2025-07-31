@@ -31,7 +31,7 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
-
+   
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match')
       return
@@ -43,23 +43,60 @@ const RegisterPage = () => {
     }
 
     setLoading(true)
-
-    const result = await register({
+    const userData = {
       username: formData.username,
-      first_name: formData.firstName,
-      last_name: formData.lastName,
-      email: formData.email,
-      password: formData.password,
-      bio: formData.bio
-    })
-    
-    if (result.success) {
-      navigate('/chat')
-    } else {
-      setError(result.error)
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        bio: formData.bio
     }
-    
-    setLoading(false)
+    try {
+      const result = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData)
+      })
+
+      // If backend returns non-2xx, try to parse error
+      let data = null
+      try {
+        data = await result.json()
+      } catch (e) {
+        // ignore
+      }
+
+      if (!result.ok) {
+        setError(data?.error || 'Failed to create account. Please try again later.')
+        setLoading(false)
+        return
+      }
+
+      // If backend returns true (success)
+      if (data === true || data?.success || result.status === 200) {
+        setLoading(false)
+        navigate('/otp-verification', { state: { email: formData.email, userData } })
+        return
+      }
+
+      // If backend returns error in data
+      if (data?.error) {
+        setError(data.error)
+        setLoading(false)
+        return
+      }
+
+      // Fallback error
+      setError('Failed to create account. Please try again later.')
+      setLoading(false)
+    } catch (error) {
+      console.error('Registration error:', error)
+      setError('Failed to create account. Please try again later.')
+      setLoading(false)
+      return
+    }
   }
 
   return (

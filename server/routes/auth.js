@@ -1,21 +1,64 @@
 import express from 'express'
 import User from '../models/User.js'
-import emailController from '../middleware/emailController.js'
+import { sendOtpAndSave, verifyOtpAndMark } from '../middleware/emailController.js'
 const router = express.Router()
 
-// Register
-const accountCreation=async (req,res) =>{
-  const { username, first_name, last_name, email, password, bio } = req.body
+// Register: send OTP and save
+router.post('/register', async (req, res) => {
+  try {
+    const { username, first_name, last_name, email, password, bio } = req.body;
 
-  const user = await User.create({
+    // Validation
+    if (!username || !first_name || !last_name || !email || !password) {
+      return res.status(400).json({ error: 'All required fields must be provided' });
+    }
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'Password must be at least 6 characters long' });
+    }
+    // Check if user already exists
+    const existingUser = await User.findByUsername(username);
+    if (existingUser) {
+      return res.status(400).json({ error: 'Username already exists' });
+    }
+    // Send OTP and save to DB
+    await sendOtpAndSave(email);
+    res.json({ message: 'OTP sent to email' });
+  } catch (error) {
+    console.error('Registration error:', error);
+    if (error.code === '23505') {
+      if (error.constraint?.includes('username')) {
+        return res.status(400).json({ error: 'Username already exists' });
+      }
+      if (error.constraint?.includes('email')) {
+        return res.status(400).json({ error: 'Email already exists' });
+      }
+    }
+    res.status(500).json({ error: 'Registration failed' });
+  }
+});
+
+// Account creation: verify OTP and create user
+router.post('/accountCreation', async (req, res) => {
+  const { email, enteredCode, userData } = req.body;
+  if (!email || !enteredCode || !userData) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+  // Verify OTP
+  const isValid = await verifyOtpAndMark(email, enteredCode);
+  if (!isValid) {
+    return res.status(400).json({ error: 'Invalid or expired OTP' });
+  }
+  // Create user
+  try {
+    const { username, first_name, last_name, password, bio } = userData;
+    const user = await User.create({
       username,
       first_name,
       last_name,
       email,
       password,
       bio: bio || null
-    })
-
+    });
     res.status(201).json({
       message: 'User created successfully',
       user: {
@@ -26,42 +69,12 @@ const accountCreation=async (req,res) =>{
         email: user.email,
         bio: user.bio
       }
-    })
-}
-router.post('/register', async (req, res) => {
-  try {
-    const { username, first_name, last_name, email, password, bio } = req.body
-
-    // Validation
-    if (!username || !first_name || !last_name || !email || !password) {
-      return res.status(400).json({ error: 'All required fields must be provided' })
-    }
-
-    if (password.length < 6) {
-      return res.status(400).json({ error: 'Password must be at least 6 characters long' })
-    }
-
-    // Check if user already exists
-    const existingUser = await User.findByUsername(username)
-    if (existingUser) {
-      return res.status(400).json({ error: 'Username already exists' })
-    }
-
-    // Create user
-   await accountCreation(req,res);
+    });
   } catch (error) {
-    console.error('Registration error:', error)
-    if (error.code === '23505') {
-      if (error.constraint?.includes('username')) {
-        return res.status(400).json({ error: 'Username already exists' })
-      }
-      if (error.constraint?.includes('email')) {
-        return res.status(400).json({ error: 'Email already exists' })
-      }
-    }
-    res.status(500).json({ error: 'Registration failed' })
+    console.error('Account creation error:', error);
+    res.status(500).json({ error: 'Account creation failed' });
   }
-})
+});
 
 // Login
 router.post('/login', async (req, res) => {

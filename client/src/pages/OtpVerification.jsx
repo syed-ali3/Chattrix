@@ -1,8 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageSquare } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+
 const OtpVerification =()=> {
   const [code, setCode] = useState(['', '', '', '', '', '']);
   const inputRefs = useRef([]);
+  const Navigate = useNavigate();
+  const location = useLocation();
+  const { email, userData } = location.state || {};
+  const { accountCreation } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   useEffect(() => {
     // Focus first input on mount
@@ -51,9 +61,27 @@ const OtpVerification =()=> {
 
   const isCodeComplete = code.every(digit => digit !== '');
 
-  const handleConfirm = () => {
-    if (isCodeComplete) {
-      alert(`Verification code: ${code.join('')}`);
+  const handleConfirm = async () => {
+    setIsLoading(true);
+    try {
+      const enteredCode = code.join('');
+      const result = await accountCreation(email, enteredCode, userData);
+      
+      if (result.success) {
+        setIsLoading(false);
+        setIsSubmitted(true);
+    // Reset after showing success
+     setTimeout(() => {
+      setIsSubmitted(false);
+      setCode(['', '', '', '', '', '']);
+    }, 2000);
+        Navigate('/chat');
+      } else {
+        alert(result.error || 'Failed to confirm OTP. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error confirming OTP:', error);
+      alert('Failed to confirm OTP. Please try again.');
     }
   };
 
