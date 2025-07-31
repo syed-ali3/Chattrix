@@ -1,9 +1,33 @@
 import express from 'express'
 import User from '../models/User.js'
-
+import emailController from '../middleware/emailController.js'
 const router = express.Router()
 
 // Register
+const accountCreation=async (req,res) =>{
+  const { username, first_name, last_name, email, password, bio } = req.body
+
+  const user = await User.create({
+      username,
+      first_name,
+      last_name,
+      email,
+      password,
+      bio: bio || null
+    })
+
+    res.status(201).json({
+      message: 'User created successfully',
+      user: {
+        id: user.id,
+        username: user.username,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        bio: user.bio
+      }
+    })
+}
 router.post('/register', async (req, res) => {
   try {
     const { username, first_name, last_name, email, password, bio } = req.body
@@ -24,26 +48,7 @@ router.post('/register', async (req, res) => {
     }
 
     // Create user
-    const user = await User.create({
-      username,
-      first_name,
-      last_name,
-      email,
-      password,
-      bio: bio || null
-    })
-
-    res.status(201).json({
-      message: 'User created successfully',
-      user: {
-        id: user.id,
-        username: user.username,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        email: user.email,
-        bio: user.bio
-      }
-    })
+   await accountCreation(req,res);
   } catch (error) {
     console.error('Registration error:', error)
     if (error.code === '23505') {
