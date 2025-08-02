@@ -8,6 +8,7 @@ import RegisterPage from './pages/RegisterPage'
 import ChatPage from './pages/ChatPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import OtpVerification from './pages/OtpVerification'
+import ProfilePage from './pages/ProfilePage'
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/otp-verification" element={<OtpVerification />} />
+              <Route path="/profile" element={<ProfilePage />} />
               
               {/* Protected Routes */}
               <Route 

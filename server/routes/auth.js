@@ -57,7 +57,7 @@ router.post('/accountCreation', async (req, res) => {
       last_name,
       email,
       password,
-      bio: bio || null
+      bio: bio || null,
     });
     res.status(201).json({
       message: 'User created successfully',
@@ -67,7 +67,8 @@ router.post('/accountCreation', async (req, res) => {
         first_name: user.first_name,
         last_name: user.last_name,
         email: user.email,
-        bio: user.bio
+        bio: user.bio,
+        profile_picture: user.profile_picture || null
       }
     });
   } catch (error) {
