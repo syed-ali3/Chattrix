@@ -22,7 +22,7 @@ const ChatWindow = ({ chat, messages, onSendMessage, currentUser }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
+
     if (!newMessage.trim() && !selectedImage) return
     if (!chat) return
 
@@ -97,10 +97,14 @@ const ChatWindow = ({ chat, messages, onSendMessage, currentUser }) => {
   return (
     <div className="flex-1 flex flex-col">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 p-4" onClick={() => {handleClickHeader(otherUser.username)}}>
+      <div className="bg-white border-b border-gray-200 p-4" onClick={() => { handleClickHeader(otherUser.username) }}>
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-teal-600 rounded-full flex items-center justify-center">
-            <User className="h-5 w-5 text-white" />
+            {otherUser.profile_picture ? (
+              <img src={otherUser.profile_picture} alt="User Avatar" className="w-12 h-12 rounded-full" />
+            ) : (
+              <User className="h-6 w-6 text-white" />
+            )}
           </div>
           <div>
             <h2 className="font-medium text-gray-900">
@@ -150,7 +154,7 @@ const ChatWindow = ({ chat, messages, onSendMessage, currentUser }) => {
             </div>
           </div>
         )}
-        
+
         <form onSubmit={handleSubmit} className="flex items-center space-x-2">
           <input
             type="file"
@@ -159,7 +163,7 @@ const ChatWindow = ({ chat, messages, onSendMessage, currentUser }) => {
             accept="image/*"
             className="hidden"
           />
-          
+
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
