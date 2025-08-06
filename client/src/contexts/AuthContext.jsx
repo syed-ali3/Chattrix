@@ -36,6 +36,7 @@ export const AuthProvider = ({ children }) => {
       })
       
       const userData = response.data.user
+      console.log('Login successful:', userData)
       setUser(userData)
       localStorage.setItem('chattrix_user', JSON.stringify(userData))
       return { success: true }

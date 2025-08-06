@@ -19,6 +19,7 @@ class User {
   static async findByUsername(username) {
     const query = 'SELECT * FROM users WHERE username = $1'
     const result = await pool.query(query, [username])
+    console.log('User found:', result.rows[0])
     return result.rows[0]
   }
 

@@ -40,7 +40,7 @@ router.get('/:id', requireAuthQuery, async (req, res) => {
 })
 
 //update user profile
-router.put('/:id', requireAuthQuery, upload.single('profile_picture'), async (req, res) => {
+router.put('/:id', upload.single('profile_picture'), async (req, res) => {
   try {
     const { first_name, last_name, bio } = req.body
     const profile_picture = req.file ? req.file.path : null

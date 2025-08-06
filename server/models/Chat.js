@@ -50,8 +50,8 @@ class Chat {
   static async findByUserId(userId) {
     const query = `
       SELECT c.*, 
-             u1.id as user1_id, u1.username as user1_username, u1.first_name as user1_first_name, u1.last_name as user1_last_name,
-             u2.id as user2_id, u2.username as user2_username, u2.first_name as user2_first_name, u2.last_name as user2_last_name,
+             u1.id as user1_id, u1.username as user1_username, u1.first_name as user1_first_name, u1.last_name as user1_last_name, u1.profile_picture as user1_profile_picture,
+             u2.id as user2_id, u2.username as user2_username, u2.first_name as user2_first_name, u2.last_name as user2_last_name, u2.profile_picture as user2_profile_picture,
              m.message_text as latest_message_text, m.created_at as latest_message_time, m.sender_id as latest_message_sender_id
       FROM chats c
       JOIN users u1 ON c.user1_id = u1.id
@@ -66,7 +66,6 @@ class Chat {
       WHERE c.user1_id = $1 OR c.user2_id = $1
       ORDER BY COALESCE(m.created_at, c.id::text::timestamp) DESC
     `
-    
     const result = await pool.query(query, [userId])
     return result.rows.map(row => this.formatChatWithLatestMessage(row))
   }
@@ -95,13 +94,15 @@ class Chat {
         id: row.user1_id,
         username: row.user1_username,
         first_name: row.user1_first_name,
-        last_name: row.user1_last_name
+        last_name: row.user1_last_name,
+        profile_picture: row.user1_profile_picture // <-- add this line
       },
       user2: {
         id: row.user2_id,
         username: row.user2_username,
         first_name: row.user2_first_name,
-        last_name: row.user2_last_name
+        last_name: row.user2_last_name,
+        profile_picture: row.user2_profile_picture // <-- add this line
       }
     }
   }

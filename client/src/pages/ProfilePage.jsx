@@ -32,16 +32,26 @@ const Profile = () => {
     };
 
     const handleSave = async () => {
-        
         try {
-            
-            console.log("Saving profile data:", formData);
-            
+            const form = new FormData();
+            form.append('first_name', formData.first_name);
+            form.append('last_name', formData.last_name);
+            form.append('bio', formData.bio);
+
+            // Only append file if a new one is selected
+            if (formData.profile_picture_file) {
+                form.append('profile_picture', formData.profile_picture_file);
+            }
+
+            const res = await fetch(`/api/users/${user.id}`, {
+                method: 'PUT',
+                body: form,
+            });
+
+            if (!res.ok) throw new Error("Network response was not ok");
             setIsEditing(false);
-            // Handle success
             toast.success("Profile updated successfully!");
         } catch (error) {
-            console.error("Error saving profile:", error);
             toast.error("Failed to save profile. Please try again.");
         }
     };
@@ -126,6 +136,10 @@ const Profile = () => {
                                         onChange={e => {
                                             const file = e.target.files[0];
                                             if (file) {
+                                                setFormData(prev => ({
+                                                    ...prev,
+                                                    profile_picture_file: file
+                                                }));
                                                 const reader = new FileReader();
                                                 reader.onloadend = () => {
                                                     setFormData(prev => ({ ...prev, profile_picture: reader.result }));

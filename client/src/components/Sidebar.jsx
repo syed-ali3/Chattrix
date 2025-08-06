@@ -106,7 +106,12 @@ const Sidebar = ({ chats, selectedChat, onChatSelect, onNewChat }) => {
         {/* User Info */}
         <div className="flex items-center space-x-3 mb-4">
           <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-teal-600 rounded-full flex items-center justify-center">
-            <User className="h-5 w-5 text-white" />
+            {/* display user image here */}
+            {user?.profile_picture ? (
+              <img src={user.profile_picture} alt="User Avatar" className="w-10 h-10 rounded-full" />
+            ) : (
+              <User className="h-6 w-6 text-white" />
+            )}
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-medium text-gray-900 truncate">{user?.first_name} {user?.last_name}</p>
@@ -149,7 +154,11 @@ const Sidebar = ({ chats, selectedChat, onChatSelect, onNewChat }) => {
                   <div className="flex items-center space-x-3">
                     <div className="relative">
                       <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-teal-600 rounded-full flex items-center justify-center">
+                      {otherUser.profile_picture ? (
+                        <img src={otherUser.profile_picture} alt="User Avatar" className="w-12 h-12 rounded-full" />
+                      ) : (
                         <User className="h-6 w-6 text-white" />
+                      )}
                       </div>
                       {isOnline && (
                         <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
