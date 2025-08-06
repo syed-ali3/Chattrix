@@ -1,11 +1,11 @@
 import { use, useState } from "react";
 import { useAuth } from '../contexts/AuthContext'
 import { useEffect } from "react";
+import toast from "react-hot-toast";
 
 const Profile = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({ username: '', first_name: '', last_name: '', email: '', bio: '', profile_picture: '' });
-    const [profilePictureHover, setProfilePictureHover] = useState(false);
     const { user } = useAuth();
     console.log("User data from context:", user);
     useEffect(() => {
@@ -37,8 +37,10 @@ const Profile = () => {
             console.log("Saving profile data:", formData);
             setIsEditing(false);
             // Handle success
+            toast.success("Profile updated successfully!");
         } catch (error) {
             console.error("Error saving profile:", error);
+            toast.error("Failed to save profile. Please try again.");
         }
     };
 
@@ -92,8 +94,6 @@ const Profile = () => {
                     <div className="flex justify-center mb-8">
                         <div
                             className="relative group cursor-pointer"
-                            onMouseEnter={() => setProfilePictureHover(true)}
-                            onMouseLeave={() => setProfilePictureHover(false)}
                         >
                             <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-teal-500 flex items-center justify-center text-white text-4xl font-bold shadow-xl border-4 border-white relative overflow-hidden transition-transform duration-300 group-hover:scale-105">
                                 {formData.profile_picture ? (
@@ -107,39 +107,32 @@ const Profile = () => {
                                         {formData.first_name && formData.first_name[0]}{formData.last_name && formData.last_name[0]}
                                     </span>
                                 )}
-
-                                {profilePictureHover && (
-                                    <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center transition-all duration-200">
-                                        <label htmlFor="profilePicInput">
-                                            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                            </svg>
-                                            <input
-                                                id="profilePicInput"
-                                                type="file"
-                                                accept="image/*"
-                                                style={{ display: 'none' }}
-                                                onChange={e => {
-                                                    const file = e.target.files[0];
-                                                    if (file) {
-                                                        const reader = new FileReader();
-                                                        reader.onloadend = () => {
-                                                            setFormData(prev => ({ ...prev, profile_picture: reader.result }));
-                                                        };
-                                                        reader.readAsDataURL(file);
-                                                    }
-                                                }}
-                                            />
-                                        </label>
-                                    </div>
-                                )}
                             </div>
 
                             {/* Hover indicator */}
                             <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 group-hover:bg-blue-700 group-hover:scale-110">
-                                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                </svg>
+
+                                <label htmlFor="profilePicInput">
+                                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                    </svg>
+                                    <input
+                                        id="profilePicInput"
+                                        type="file"
+                                        accept="image/*"
+                                        style={{ display: 'none' }}
+                                        onChange={e => {
+                                            const file = e.target.files[0];
+                                            if (file) {
+                                                const reader = new FileReader();
+                                                reader.onloadend = () => {
+                                                    setFormData(prev => ({ ...prev, profile_picture: reader.result }));
+                                                };
+                                                reader.readAsDataURL(file);
+                                            }
+                                        }}
+                                    />
+                                </label>
                             </div>
                         </div>
                     </div>

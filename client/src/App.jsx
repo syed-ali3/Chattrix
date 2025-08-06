@@ -9,6 +9,8 @@ import ChatPage from './pages/ChatPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import OtpVerification from './pages/OtpVerification'
 import ProfilePage from './pages/ProfilePage'
+import { Toaster } from 'react-hot-toast';
+
 
 function App() {
   return (
@@ -44,6 +46,7 @@ function App() {
           </div>
         </Router>
       </SocketProvider>
+      <Toaster />
     </AuthProvider>
   )
 }
