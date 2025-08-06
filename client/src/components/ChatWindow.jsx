@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Send, Image, User } from 'lucide-react'
 import MessageBubble from './MessageBubble'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
 const ChatWindow = ({ chat, messages, onSendMessage, currentUser }) => {
   const [newMessage, setNewMessage] = useState('')
@@ -9,6 +10,7 @@ const ChatWindow = ({ chat, messages, onSendMessage, currentUser }) => {
   const [uploading, setUploading] = useState(false)
   const messagesEndRef = useRef(null)
   const fileInputRef = useRef(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     scrollToBottom()
@@ -48,6 +50,11 @@ const ChatWindow = ({ chat, messages, onSendMessage, currentUser }) => {
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
+  }
+  const handleClickHeader = (username) => {
+    console.log(`Clicked on header for user: ${username}`)
+    navigate(`/view-profile`, { state: { username } })
+
   }
 
   // Handle message deletion
@@ -90,7 +97,7 @@ const ChatWindow = ({ chat, messages, onSendMessage, currentUser }) => {
   return (
     <div className="flex-1 flex flex-col">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 p-4">
+      <div className="bg-white border-b border-gray-200 p-4" onClick={() => {handleClickHeader(otherUser.username)}}>
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-teal-600 rounded-full flex items-center justify-center">
             <User className="h-5 w-5 text-white" />

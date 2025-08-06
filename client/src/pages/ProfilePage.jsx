@@ -32,9 +32,11 @@ const Profile = () => {
     };
 
     const handleSave = async () => {
+        
         try {
-            // Here you would call your API
+            
             console.log("Saving profile data:", formData);
+            
             setIsEditing(false);
             // Handle success
             toast.success("Profile updated successfully!");
@@ -93,7 +95,7 @@ const Profile = () => {
                     {/* Profile Picture Section */}
                     <div className="flex justify-center mb-8">
                         <div
-                            className="relative group cursor-pointer"
+                            className="relative group "
                         >
                             <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-teal-500 flex items-center justify-center text-white text-4xl font-bold shadow-xl border-4 border-white relative overflow-hidden transition-transform duration-300 group-hover:scale-105">
                                 {formData.profile_picture ? (
@@ -113,7 +115,7 @@ const Profile = () => {
                             <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 group-hover:bg-blue-700 group-hover:scale-110">
 
                                 <label htmlFor="profilePicInput">
-                                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="cursor-pointer  w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                     </svg>
                                     <input

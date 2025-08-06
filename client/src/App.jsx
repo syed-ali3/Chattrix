@@ -9,6 +9,7 @@ import ChatPage from './pages/ChatPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import OtpVerification from './pages/OtpVerification'
 import ProfilePage from './pages/ProfilePage'
+import ViewProfile from './pages/ViewProfile'
 import { Toaster } from 'react-hot-toast';
 
 
@@ -19,6 +20,8 @@ function App() {
         <Router>
           <div className="min-h-screen bg-gray-50">
             <Routes>
+              {/* Public Routes */}
+              <Route path="/view-profile" element={<ViewProfile />} />
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
