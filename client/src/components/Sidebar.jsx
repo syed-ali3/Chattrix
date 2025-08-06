@@ -4,8 +4,12 @@ import { useSocket } from '../contexts/SocketContext'
 import { Search, Plus, LogOut, User, MessageSquare } from 'lucide-react'
 import UserSearch from './UserSearch'
 import axios from 'axios'
+import { Settings } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+
 
 const Sidebar = ({ chats, selectedChat, onChatSelect, onNewChat }) => {
+  const navigate = useNavigate()
   const [showUserSearch, setShowUserSearch] = useState(false)
   const [sidebarChats, setSidebarChats] = useState(chats)
   const { user, logout } = useAuth()
@@ -53,6 +57,10 @@ const Sidebar = ({ chats, selectedChat, onChatSelect, onNewChat }) => {
       console.error('Error creating chat:', error)
     }
   }
+  const handleSettingsClick = () => {
+    console.log("Settings clicked")
+    navigate('/profile')
+  }
 
   const formatTime = (timestamp) => {
     const date = new Date(timestamp)
@@ -60,15 +68,15 @@ const Sidebar = ({ chats, selectedChat, onChatSelect, onNewChat }) => {
     const diffInHours = (now - date) / (1000 * 60 * 60)
 
     if (diffInHours < 24) {
-      return date.toLocaleTimeString('en-US', { 
-        hour: '2-digit', 
+      return date.toLocaleTimeString('en-US', {
+        hour: '2-digit',
         minute: '2-digit',
-        hour12: false 
+        hour12: false
       })
     } else {
-      return date.toLocaleDateString('en-US', { 
-        month: 'short', 
-        day: 'numeric' 
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric'
       })
     }
   }
@@ -94,7 +102,7 @@ const Sidebar = ({ chats, selectedChat, onChatSelect, onNewChat }) => {
             <LogOut className="h-5 w-5" />
           </button>
         </div>
-        
+
         {/* User Info */}
         <div className="flex items-center space-x-3 mb-4">
           <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-teal-600 rounded-full flex items-center justify-center">
@@ -133,11 +141,10 @@ const Sidebar = ({ chats, selectedChat, onChatSelect, onNewChat }) => {
                 <button
                   key={chat.id}
                   onClick={() => onChatSelect(chat)}
-                  className={`w-full p-3 rounded-lg text-left transition-colors ${
-                    isSelected 
-                      ? 'bg-blue-50 border-l-4 border-blue-600' 
+                  className={`w-full p-3 rounded-lg text-left transition-colors ${isSelected
+                      ? 'bg-blue-50 border-l-4 border-blue-600'
                       : 'hover:bg-gray-100'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center space-x-3">
                     <div className="relative">
@@ -183,6 +190,17 @@ const Sidebar = ({ chats, selectedChat, onChatSelect, onNewChat }) => {
           onUserSelect={handleCreateChat}
         />
       )}
+      {/* Settings Button */}
+      <div className="border-t border-gray-200 p-4 bg-white">
+        <button
+          onClick={handleSettingsClick}
+          className="w-full flex items-center justify-center space-x-2 px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+        >
+          <Settings className="h-5 w-5" />
+          <span>Settings</span>
+        </button>
+      </div>
+
     </div>
   )
 }
