@@ -2,11 +2,14 @@ import { use, useState } from "react";
 import { useAuth } from '../contexts/AuthContext'
 import { useEffect } from "react";
 import toast from "react-hot-toast";
+import { MessageCircle, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({ username: '', first_name: '', last_name: '', email: '', bio: '', profile_picture: '' });
     const { user } = useAuth();
+    const navigate = useNavigate();
     console.log("User data from context:", user);
     useEffect(() => {
         if (user) {
@@ -67,8 +70,15 @@ const Profile = () => {
             <div className="bg-white shadow-sm border-b border-blue-100">
                 <div className="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
                     <div className="flex items-center space-x-3">
+                        <button onClick={() => navigate(-1)} className="p-1 text-gray-600 hover:text-gray-800 transition-colors">
+                            <ArrowLeft className="w-5 h-5" />
+                        </button>
                         <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center shadow-md">
-                            <span className="text-white font-bold text-sm">C</span>
+                            <span className="text-white font-bold text-sm">
+                                <div className="w-6 h-6 bg-blue-600 rounded flex items-center justify-center">
+                                    <MessageCircle className="w-4 h-4 text-white" />
+                                </div>
+                            </span>
                         </div>
                         <h1 className="text-xl font-semibold text-gray-900">Chattrix</h1>
                     </div>
@@ -122,7 +132,8 @@ const Profile = () => {
                             </div>
 
                             {/* Hover indicator */}
-                            <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 group-hover:bg-blue-700 group-hover:scale-110">
+                            {isEditing && (
+                                <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 group-hover:bg-blue-700 group-hover:scale-110">
 
                                 <label htmlFor="profilePicInput">
                                     <svg className="cursor-pointer  w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -149,7 +160,7 @@ const Profile = () => {
                                         }}
                                     />
                                 </label>
-                            </div>
+                            </div>)}
                         </div>
                     </div>
 

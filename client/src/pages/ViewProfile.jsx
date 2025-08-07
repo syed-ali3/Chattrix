@@ -1,12 +1,12 @@
 import React from 'react';
-import { MessageCircle, ArrowLeft, View } from 'lucide-react';
+import { MessageCircle, ArrowLeft } from 'lucide-react';
 import { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 function ViewProfile() {
-
+  const navigate = useNavigate();
   const location = useLocation();
   const { username } = location.state || {};
 
@@ -38,7 +38,7 @@ function ViewProfile() {
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <button className="p-1 text-gray-600 hover:text-gray-800 transition-colors">
+            <button onClick={() => navigate("/chat")} className="p-1 text-gray-600 hover:text-gray-800 transition-colors">
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div className="w-6 h-6 bg-blue-600 rounded flex items-center justify-center">
