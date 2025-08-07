@@ -50,18 +50,6 @@ const ChatPage = () => {
         // Update chat list with latest message
         fetchChats()
       })
-
-      socket.on('delete-message', ({ chatId, messageId }) => {
-        if (selectedChat && selectedChat.id === chatId) {
-          setMessages((prev) =>
-            prev.map((m) =>
-              m.id === messageId
-                ? { ...m, message_text: 'user deleted this message', image_url: null }
-                : m
-            )
-          )
-        }
-      })
       socket.on('message-deleted', ({ chatId, messageId }) => {
         if (selectedChat && selectedChat.id === chatId) {
           setMessages((prev) =>
