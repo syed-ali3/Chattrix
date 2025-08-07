@@ -51,8 +51,36 @@ const ChatPage = () => {
         fetchChats()
       })
 
+      socket.on('delete-message', ({ chatId, messageId }) => {
+        if (selectedChat && selectedChat.id === chatId) {
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === messageId
+                ? { ...m, message_text: 'user deleted this message', image_url: null }
+                : m
+            )
+          )
+        }
+      })
+      socket.on('message-deleted', ({ chatId, messageId }) => {
+        if (selectedChat && selectedChat.id === chatId) {
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === messageId
+                ? { ...m, message_text: 'user deleted this message', image_url: null }
+                : m
+            )
+          )
+        }
+      })
+
+
+
       return () => {
         socket.off('new-message')
+        socket.off('delete-message') // ✅ cleanup
+        socket.off('message-deleted')
+
         // Optionally leave the chat room on unmount
         if (selectedChat) {
           socket.emit('leave-chat', selectedChat.id)
@@ -103,7 +131,7 @@ const ChatPage = () => {
       const formData = new FormData()
       formData.append('userId', user.id)
       formData.append('message_text', messageData.message_text || '')
-      
+
       if (messageData.image) {
         formData.append('image', messageData.image)
       }
@@ -138,7 +166,7 @@ const ChatPage = () => {
 
   return (
     <div className="h-screen flex bg-white">
-      <Sidebar 
+      <Sidebar
         chats={chats}
         selectedChat={selectedChat}
         onChatSelect={handleChatSelect}

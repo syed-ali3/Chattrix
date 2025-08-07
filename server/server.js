@@ -64,10 +64,13 @@ io.on('connection', (socket) => {
   })
 
   socket.on('send-message', (message) => {
-    // Emit to all users in the chat (global event for sidebar updates)
-    // This will send to all sockets, but you can optimize by tracking chat members if needed
-    io.emit('new-message', message)
-  })
+  io.emit('new-message', message)
+})
+
+socket.on('delete-message', ({ chatId, messageId }) => {
+  socket.to(`chat-${chatId}`).emit('delete-message', { chatId, messageId })
+})
+
 
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id)

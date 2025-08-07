@@ -3,8 +3,12 @@ import { Send, Image, User } from 'lucide-react'
 import MessageBubble from './MessageBubble'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { useSocket } from '../contexts/SocketContext'
 
-const ChatWindow = ({ chat, messages, onSendMessage, currentUser,setMessages }) => {
+
+const ChatWindow = ({ chat, messages, onSendMessage, currentUser, setMessages }) => {
+  const { socket } = useSocket()
+
   const [newMessage, setNewMessage] = useState('')
   const [selectedImage, setSelectedImage] = useState(null)
   const [uploading, setUploading] = useState(false)
@@ -58,27 +62,38 @@ const ChatWindow = ({ chat, messages, onSendMessage, currentUser,setMessages }) 
   }
 
   // Handle message deletion
- const handleDeleteMessage = async (message) => {
-  if (!chat) return
-  if (!window.confirm('Are you sure you want to delete this message?')) return
+  const handleDeleteMessage = async (message) => {
+    if (!chat) return
+    if (!window.confirm('Are you sure you want to delete this message?')) return
 
-  // Optimistically update UI
-  setMessages((prev) =>
-    prev.map((m) =>
-      m.id === message.id
-        ? { ...m, message_text: 'user deleted this message', image_url: null }
-        : m
+    // Optimistically update UI
+    setMessages((prev) =>
+      prev.map((m) =>
+        m.id === message.id
+          ? { ...m, message_text: 'user deleted this message', image_url: null }
+          : m
+      )
     )
-  )
 
-  try {
-    await axios.delete(`/api/chats/${chat.id}/messages/${message.id}?userId=${currentUser.id}`)
-    // No further action needed — already updated in UI
-  } catch (error) {
-    alert('Failed to delete message')
-    // Optionally rollback UI here
+    try {
+      await axios.delete(`/api/chats/${chat.id}/messages/${message.id}?userId=${currentUser.id}`)
+      if (socket) {
+        console.log('Emitting delete-message', {
+          chatId: chat.id,
+          messageId: message.id
+        }) // <-- 👈 this line helps debug
+        socket.emit('delete-message', {
+          chatId: chat.id,
+          messageId: message.id
+        })
+      }
+
+      // No further action needed — already updated in UI
+    } catch (error) {
+      alert('Failed to delete message')
+      // Optionally rollback UI here
+    }
   }
-}
 
   if (!chat) {
     return (
