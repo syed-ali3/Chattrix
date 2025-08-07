@@ -149,6 +149,7 @@ const ChatPage = () => {
         messages={messages}
         onSendMessage={sendMessage}
         currentUser={user}
+        setMessages={setMessages}
       />
     </div>
   )

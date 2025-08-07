@@ -4,7 +4,7 @@ import MessageBubble from './MessageBubble'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 
-const ChatWindow = ({ chat, messages, onSendMessage, currentUser }) => {
+const ChatWindow = ({ chat, messages, onSendMessage, currentUser,setMessages }) => {
   const [newMessage, setNewMessage] = useState('')
   const [selectedImage, setSelectedImage] = useState(null)
   const [uploading, setUploading] = useState(false)
@@ -58,27 +58,27 @@ const ChatWindow = ({ chat, messages, onSendMessage, currentUser }) => {
   }
 
   // Handle message deletion
-  const handleDeleteMessage = async (message) => {
-    if (!chat) return
-    if (!window.confirm('Are you sure you want to delete this message?')) return
-    try {
-      await axios.delete(`/api/chats/${chat.id}/messages/${message.id}?userId=${currentUser.id}`)
-      // Remove from UI for sender, update for receiver
-      if (message.sender_id === currentUser.id) {
-        setMessages((prev) => prev.filter((m) => m.id !== message.id))
-      } else {
-        setMessages((prev) =>
-          prev.map((m) =>
-            m.id === message.id
-              ? { ...m, message_text: 'user deleted this message', image_url: null }
-              : m
-          )
-        )
-      }
-    } catch (error) {
-      alert('Failed to delete message')
-    }
+ const handleDeleteMessage = async (message) => {
+  if (!chat) return
+  if (!window.confirm('Are you sure you want to delete this message?')) return
+
+  // Optimistically update UI
+  setMessages((prev) =>
+    prev.map((m) =>
+      m.id === message.id
+        ? { ...m, message_text: 'user deleted this message', image_url: null }
+        : m
+    )
+  )
+
+  try {
+    await axios.delete(`/api/chats/${chat.id}/messages/${message.id}?userId=${currentUser.id}`)
+    // No further action needed — already updated in UI
+  } catch (error) {
+    alert('Failed to delete message')
+    // Optionally rollback UI here
   }
+}
 
   if (!chat) {
     return (
