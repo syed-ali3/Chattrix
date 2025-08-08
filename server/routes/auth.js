@@ -20,6 +20,11 @@ router.post('/register', async (req, res) => {
     if (existingUser) {
       return res.status(400).json({ error: 'Username already exists' });
     }
+    // check if email already exists
+    const existingEmail = await User.findByEmail(email);
+    if (existingEmail) {
+      return res.status(400).json({ error: 'Email already exists' });
+    }
     // Send OTP and save to DB
     await sendOtpAndSave(email);
     res.json({ message: 'OTP sent to email' });

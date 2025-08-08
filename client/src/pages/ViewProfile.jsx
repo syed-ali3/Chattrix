@@ -1,5 +1,5 @@
 import React from 'react';
-import { MessageCircle, ArrowLeft } from 'lucide-react';
+import { MessageSquare, ArrowLeft,MessageCircle } from 'lucide-react';
 import { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
@@ -41,9 +41,7 @@ function ViewProfile() {
             <button onClick={() => navigate("/chat")} className="p-1 text-gray-600 hover:text-gray-800 transition-colors">
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <div className="w-6 h-6 bg-blue-600 rounded flex items-center justify-center">
-              <MessageCircle className="w-4 h-4 text-white" />
-            </div>
+             <MessageSquare className="h-6 w-6 text-blue-600" />
             <h1 className="text-lg font-medium text-gray-900">Chattrix</h1>
           </div>
         </div>
@@ -102,7 +100,7 @@ function ViewProfile() {
             <div className="grid grid-cols-1 gap-6 pt-6 border-t border-gray-100">
               <div className="text-center">
                 <div className="flex items-center justify-center mb-2">
-                  <MessageCircle className="w-5 h-5 text-purple-600 mr-1" />
+                   <MessageSquare className="h-6 w-6 text-purple-600 mr-1" />
                   <span className="text-xl font-bold text-gray-900">{dataSet.total_chats}</span>
                 </div>
                 <p className="text-sm text-gray-600">Chats</p>

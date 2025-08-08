@@ -22,6 +22,13 @@ class User {
     console.log('User found:', result.rows[0])
     return result.rows[0]
   }
+  // making static async findByEmail
+  static async findByEmail(email) {
+    const query = 'SELECT * FROM users WHERE email = $1'
+    const result = await pool.query(query, [email])
+    console.log('User found:', result.rows[0])
+    return result.rows[0]
+  }
 
   static async findById(id) {
     const query = `
